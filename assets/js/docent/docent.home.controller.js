@@ -63,27 +63,39 @@ const takePhoto = ()=>{
   payload= {...payload, annexes:[photo]};
   camera.powerOf();
 }
-
-//registrar incidencia 
-// /incidences/save
-/**
- * {
- *     title,
- *     description,
- *     type,
- *     status,
- *     incidenceDate, //yyyy-MM-DD  hh:mm:ss
- *     annexes:[
- *        {
- *            name:"",
- *            mineType:"",
- *            file:""
- *        }
- *     ],
- *      location
- * }
- */
-
+const registrarIncidencia = async () => {
+  try {
+    const response = await axiosClient.post('/incidences/save', payload);
+    if (response?.status === 200) {
+      toastMessage('Incidencia registrada exitosamente').showToast();
+      $('#modal-camera').modal('hide');
+      $('#modal-map').modal('hide');
+      $('#modal-incidence').modal('hide');
+      payload={
+        title:'',
+        type:'',
+        description:'',
+        incidencesDate:'',
+        status:{id:4},
+        annexes:[
+          {
+            name:"",
+            mineType:"",
+            file:""
+          }
+        ],
+        location:{
+          lat:0,
+          lng:0
+        }
+      };
+      getAllIncidencesByEmployee();
+    }
+  } catch (error) {
+    console.log(error);
+    getAllIncidencesByEmployee();
+  }
+};
 const getAllIncidencesByEmployee = async () => {
   try {
     const table = $('#incidencesTable').DataTable();
@@ -132,6 +144,31 @@ const getAllIncidencesByEmployee = async () => {
     console.log(error);
   }
 };
+
+
+
+
+//registrar incidencia 
+// /incidences/save
+/**
+ * {
+ *     title,
+ *     description,
+ *     type,
+ *     status,
+ *     incidenceDate, //yyyy-MM-DD  hh:mm:ss
+ *     annexes:[
+ *        {
+ *            name:"",
+ *            mineType:"",
+ *            file:""
+ *        }
+ *     ],
+ *      location
+ * }
+ */
+
+
 
 $(document).ready(function () {
   if (!fullname) fullname = localStorage.getItem('fullname');
